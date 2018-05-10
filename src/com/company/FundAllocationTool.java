@@ -137,6 +137,7 @@ public class FundAllocationTool
                         Employee employee = new Employee(name, amountAdded, employeeId, buffer);
 
                         listOfEmployees.add(employee);
+                        printEmployee(employee);
 
                         if(name.equalsIgnoreCase("viewEmployee"))
                         {
