@@ -39,8 +39,8 @@ public class Employee
         return employeeInvestments;
     }
 
-    public void setAmountAdded(BigDecimal amountAdded)
+    public void addAmountAdded(BigDecimal amountAdded)
     {
-        this.amountAdded = amountAdded;
+        this.amountAdded.add(amountAdded);
     }
 }
