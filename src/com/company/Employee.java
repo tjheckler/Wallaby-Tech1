@@ -19,7 +19,6 @@ public class Employee
         this.employeeId = employeeId;
         this.employeeInvestments = employeeInvestments;
     }
-
     public String getName()
     {
         return name;

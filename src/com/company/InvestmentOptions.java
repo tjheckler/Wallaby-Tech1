@@ -15,7 +15,6 @@ public class InvestmentOptions
         this.percent = percent;
         this.amount = amount.setScale(2, RoundingMode.HALF_UP);
     }
-
     public String getName()
     {
         return name;

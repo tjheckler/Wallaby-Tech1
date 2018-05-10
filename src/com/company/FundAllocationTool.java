@@ -56,7 +56,6 @@ public class FundAllocationTool
                 {
                     System.out.println("Percentage has exceeded 100.");
                 }
-
                 BigDecimal investmentAmount = amountAdded.multiply(new BigDecimal(percentage * .01));
 
                 InvestmentOptions investmentOption = new InvestmentOptions(investmentOptions[investmentChoice - 1], percentage, investmentAmount);
