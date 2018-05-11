@@ -12,7 +12,7 @@ public class Employee
     List<InvestmentOptions> employeeInvestments = new LinkedList<>();
 
 
-    public Employee(String name, BigDecimal amountAdded, String employeeId, List<InvestmentOptions> employeeInvestments)
+    public Employee(String name, BigDecimal amountAdded, List<InvestmentOptions> employeeInvestments)
     {
         this.name = name;
         this.amountAdded = amountAdded;
@@ -39,8 +39,6 @@ public class Employee
         return employeeInvestments;
     }
 
-    public void addAmountAdded(BigDecimal amountAdded)
-    {
-        this.amountAdded.add(amountAdded);
-    }
+
+
 }

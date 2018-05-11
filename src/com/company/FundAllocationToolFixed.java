@@ -1,6 +1,7 @@
 package com.company;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class FundAllocationToolFixed
@@ -9,17 +10,19 @@ public class FundAllocationToolFixed
     Scanner scanner = new Scanner(System.in);
     Map<String, Employee> mapOfEmployees = new TreeMap<>();
     List<InvestmentOptions> buffer = new LinkedList<>();
+    List<String> stringBuffer = new ArrayList<>();
     final String[] investmentOptions = {"End Of World 2012", "Super Risky Optimists", "Y2K Survivors", "End Of Time 2038"};
     Employee employee;
     BigDecimal min = new BigDecimal("9");
     BigDecimal max = new BigDecimal("201");
-    BigDecimal amountAdded = new BigDecimal("0");
+    BigDecimal amountAdded = new BigDecimal("0").setScale(2,RoundingMode.HALF_UP);
     String command;
     Boolean isValid = true;
     String investmentName;
     double percent;
     double totalPercent;
     BigDecimal totalAmount;
+    BigDecimal employerContribution;
 
     public static void main(String[] args)
     {
@@ -45,34 +48,38 @@ public class FundAllocationToolFixed
                 totalPercent = 0;
             }
 
-            if (command.equalsIgnoreCase("ViewAccount"))
+            else if (command.equalsIgnoreCase("ViewAccount"))
             {
                 if (commands.length == 1)
                 {
                     System.out.println("Please enter a valid employee ID.");
-                } else
+                }
+
+                else
                 {
                     printAccount(mapOfEmployees.get(commands[1]), commands[1]);
                 }
             }
 
-            if (command.equalsIgnoreCase("ViewAllAccounts"))
+            else if (command.equalsIgnoreCase("ViewAllAccounts"))
             {
                 printAllAccounts();
             }
 
-            if (command.equalsIgnoreCase("exit"))
+            else if (command.equalsIgnoreCase("exit"))
             {
                 System.out.println("Thanks for using our 401(k) system, goodbye.");
+            }
+
+            else
+            {
+                System.out.println("Invalid command.");
             }
 
             if (!command.equalsIgnoreCase("exit"))
             {
                 System.out.println("Enter another command");
                 printCommands();
-            } else
-            {
-                System.out.println("Invalid command.");
             }
         } while (!command.equalsIgnoreCase("exit"));
     }
@@ -101,7 +108,7 @@ public class FundAllocationToolFixed
             System.out.println("Current account: ");
             System.out.println("Name: " + employee.getName());
             System.out.println("Employee ID: " + id);
-            System.out.println("Total amount invested: " + employee.getAmountAdded());
+            System.out.println("Total amount invested: $" + employee.getAmountAdded());
 
             printInvestments(employee);
         }
@@ -114,7 +121,7 @@ public class FundAllocationToolFixed
         {
             System.out.println("Name: " + mapOfEmployees.get(id).getName());
             System.out.println("Employee ID: " + id);
-            System.out.println("Total amount invested: " + mapOfEmployees.get(id).getAmountAdded());
+            System.out.println("Total amount invested: $" + mapOfEmployees.get(id).getAmountAdded());
             printInvestments(mapOfEmployees.get(id));
         }
 
@@ -125,14 +132,24 @@ public class FundAllocationToolFixed
         if (employee.getEmployeeInvestments().size() == 0)
         {
             System.out.println("This employee has no investments");
-        } else
+        }
+
+        else
         {
             for (InvestmentOptions investment : employee.getEmployeeInvestments())
             {
                 System.out.println("Fund name: " + investment.getName());
-                System.out.println("Percent of total fund invested: " + investment.getPercent());
-                System.out.println("Amount invested in fund: " + investment.getAmount());
+                System.out.println("Percent of total fund invested: " + investment.getPercent() + "%");
+                System.out.println("Amount invested in fund: $" + investment.getAmount());
             }
+        }
+    }
+
+    void printFundDetails()
+    {
+        for(Employee employee : )
+        {
+
         }
     }
 
@@ -147,7 +164,7 @@ public class FundAllocationToolFixed
         do
         {
             isValid = true;
-            amountAdded = scanner.nextBigDecimal();
+            amountAdded = scanner.nextBigDecimal().setScale(2,RoundingMode.HALF_UP);
             scanner.nextLine();
 
             if (amountAdded.compareTo(min) <= 0 || amountAdded.compareTo(max) >= 0)
@@ -155,6 +172,22 @@ public class FundAllocationToolFixed
                 isValid = false;
                 System.out.print("That is not a valid amount. Please enter a value from 10 to 200: ");
             }
+
+            if(((amountAdded.compareTo(new BigDecimal("50")) <= 0)))
+            {
+                employerContribution = amountAdded.multiply(new BigDecimal(".5").setScale(2,RoundingMode.HALF_UP));
+                amountAdded = amountAdded.add(employerContribution);
+                System.out.println("Your employer contributed &" + employerContribution);
+                System.out.println("Your total amount to invest is $" + amountAdded);
+            }
+            else
+            {
+                employerContribution = new BigDecimal("50").multiply(new BigDecimal(".5").setScale(2,RoundingMode.HALF_UP));
+                amountAdded = amountAdded.add(employerContribution);
+                System.out.println("Your employer contributed &" + employerContribution);
+                System.out.println("Your total amount to invest is $" + amountAdded);
+            }
+
 
         } while (!isValid);
 
@@ -179,7 +212,7 @@ public class FundAllocationToolFixed
 
         percent = getOptionPercent(planName);
 
-        BigDecimal optionAmount = getOptionAmount(amount, percent, planName);
+        BigDecimal optionAmount = (getOptionAmount(amount, percent, planName)).setScale(2,RoundingMode.HALF_UP);
         return new InvestmentOptions(planName, percent, optionAmount);
     }
 
@@ -193,7 +226,7 @@ public class FundAllocationToolFixed
 
         for (String option : investmentOptions)
         {
-            System.out.println("Enter " + index + "to invest in " + option);
+            System.out.println("Enter " + index + " to invest in " + option);
             index++;
         }
         do
@@ -205,7 +238,23 @@ public class FundAllocationToolFixed
             {
                 investmentName = investmentOptions[choice - 1];
                 isValid = true;
-            } else
+
+                if (stringBuffer.contains(investmentName))
+                {
+                    System.out.println("You are already investing in that fund.");
+                    stringBuffer.remove(stringBuffer.size() - 1);
+                    isValid = false;
+                }
+                stringBuffer.add(investmentName);
+
+                System.out.println("You have invested in: ");
+                for(String fund : stringBuffer)
+                {
+                    System.out.println(fund);
+                }
+            }
+
+            else
             {
                 System.out.println("No such investment option exists. Pick another one.");
                 isValid = false;
@@ -225,6 +274,7 @@ public class FundAllocationToolFixed
             percent = scanner.nextDouble();
             scanner.nextLine();
             totalPercent += percent;
+
             if (totalPercent <= 100)
             {
                 return percent;
@@ -240,7 +290,7 @@ public class FundAllocationToolFixed
     {
         BigDecimal factor = new BigDecimal(percent * .01);
         System.out.println("Percentage: " + percent);
-        System.out.println(amount.multiply(factor) + " added to " + fund);
-        return amount.multiply(factor);
+        System.out.println("Amount in this fund: $" + (amount.multiply(factor).setScale(2,RoundingMode.HALF_UP)));
+        return amount.multiply(factor).setScale(2,RoundingMode.HALF_UP);
     }
 }
