@@ -131,7 +131,7 @@ public class FundAllocationTool
 
                         } while (investmentChoice != -1 || percentTotal != 100);
 
-                        Employee employee = new Employee(name, amountAdded, buffer);
+                        //Employee employee = new Employee(name, amountAdded, buffer);
 
                         listOfEmployees.add(employee);
                         System.out.println("Enter another command: ");
